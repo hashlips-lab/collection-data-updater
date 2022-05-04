@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers';
 import S3ConfigurationInterface from '../Util/S3/S3ConfigurationInterface';
 import S3BasicFileDataUpdater from './S3BasicFileDataUpdater';
 
@@ -7,20 +8,20 @@ export default class S3BasicNftMetadataDataUpdater extends S3BasicFileDataUpdate
     s3Config: S3ConfigurationInterface,
     sourcePath: string,
     destinationPath: string,
-    private metadataUpdater: (tokenId: number, metadata: any) => any,
+    private metadataUpdater: (tokenId: BigNumber, metadata: any) => any,
     fileExtension: string = '.json',
   ) {
     super(resourceName, s3Config, sourcePath, destinationPath, fileExtension);
   }
 
-  protected async revealToken(tokenId: number): Promise<void> {
+  protected async revealToken(tokenId: BigNumber): Promise<void> {
     if (await this.destinationDataExists(tokenId)) {
-      console.log(`Skipping "${this.resourceName}" for token ${tokenId} (already revealed)...`);
+      console.log(`Skipping "${this.resourceName}" for token ${tokenId.toString()} (already revealed)...`);
 
       return;
     }
 
-    console.log(`Revealing "${this.resourceName}" for token ${tokenId}...`);
+    console.log(`Revealing "${this.resourceName}" for token ${tokenId.toString()}...`);
 
     try {
       const sourceData = await this.s3.getObject({
@@ -38,7 +39,7 @@ export default class S3BasicNftMetadataDataUpdater extends S3BasicFileDataUpdate
         ACL: 'public-read',
       }).promise();
     } catch (error) {
-      console.error(`Error copying "${this.resourceName}" for token ${tokenId}.`);
+      console.error(`Error copying "${this.resourceName}" for token ${tokenId.toString()}.`);
       console.error(error);
     }
   }

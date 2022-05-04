@@ -1,4 +1,5 @@
 import * as S3 from 'aws-sdk/clients/s3';
+import { BigNumber } from 'ethers';
 import DataUpdaterInterface from '../DataUpdaterInterface';
 import S3ConfigurationInterface from '../Util/S3/S3ConfigurationInterface';
 
@@ -22,7 +23,7 @@ export default class S3BasicFileDataUpdater implements DataUpdaterInterface {
     });
   }
 
-  public async updateToken(tokenId: number, isRevealed: boolean): Promise<void> {
+  public async updateToken(tokenId: BigNumber, isRevealed: boolean): Promise<void> {
     if (isRevealed) {
       await this.revealToken(tokenId);
 
@@ -32,14 +33,14 @@ export default class S3BasicFileDataUpdater implements DataUpdaterInterface {
     await this.hideToken(tokenId);
   }
 
-  protected async revealToken(tokenId: number): Promise<void> {
+  protected async revealToken(tokenId: BigNumber): Promise<void> {
     if (await this.destinationDataExists(tokenId)) {
-      console.log(`Skipping "${this.resourceName}" for token ${tokenId} (already revealed)...`);
+      console.log(`Skipping "${this.resourceName}" for token ${tokenId.toString()} (already revealed)...`);
 
       return;
     }
 
-    console.log(`Revealing "${this.resourceName}" for token ${tokenId}...`);
+    console.log(`Revealing "${this.resourceName}" for token ${tokenId.toString()}...`);
 
     try {
       await this.s3.copyObject({
@@ -49,19 +50,19 @@ export default class S3BasicFileDataUpdater implements DataUpdaterInterface {
         ACL: 'public-read',
       }).promise();
     } catch (error) {
-      console.error(`Error copying "${this.resourceName}" for token ${tokenId}.`);
+      console.error(`Error copying "${this.resourceName}" for token ${tokenId.toString()}.`);
       console.error(error);
     }
   }
 
-  protected async hideToken(tokenId: number): Promise<void> {
+  protected async hideToken(tokenId: BigNumber): Promise<void> {
     if (!await this.destinationDataExists(tokenId)) {
-      console.log(`Skipping "${this.resourceName}" for token ${tokenId} (already hidden)...`);
+      console.log(`Skipping "${this.resourceName}" for token ${tokenId.toString()} (already hidden)...`);
 
       return;
     }
 
-    console.log(`Hiding "${this.resourceName}" for token ${tokenId}...`);
+    console.log(`Hiding "${this.resourceName}" for token ${tokenId.toString()}...`);
 
     try {
       await this.s3.deleteObject({
@@ -69,24 +70,24 @@ export default class S3BasicFileDataUpdater implements DataUpdaterInterface {
         Key: this.buildDestinationObjectKey(tokenId),
       }).promise();
     } catch (error) {
-      console.error(`Error deleting "${this.resourceName}" for token ${tokenId}.`);
+      console.error(`Error deleting "${this.resourceName}" for token ${tokenId.toString()}.`);
       console.error(error);
     }
   }
 
-  protected buildSourceObjectKey(tokenId: number): string {
+  protected buildSourceObjectKey(tokenId: BigNumber): string {
     return this.buildObjectKey(tokenId, this.sourcePath);
   }
 
-  protected buildDestinationObjectKey(tokenId: number): string {
+  protected buildDestinationObjectKey(tokenId: BigNumber): string {
     return this.buildObjectKey(tokenId, this.destinationPath);
   }
 
-  protected buildObjectKey(tokenId: number, path: string): string {
-    return `${this.s3Config.pathPrefix}/${path}/${tokenId}${this.fileExtension}`.replace('//', '/');
+  protected buildObjectKey(tokenId: BigNumber, path: string): string {
+    return `${this.s3Config.pathPrefix}/${path}/${tokenId.toString()}${this.fileExtension}`.replace('//', '/');
   }
 
-  protected async destinationDataExists(tokenId: number): Promise<boolean> {
+  protected async destinationDataExists(tokenId: BigNumber): Promise<boolean> {
     try {
       await this.s3.headObject({
         Bucket: this.s3Config.bucketName,
@@ -96,7 +97,7 @@ export default class S3BasicFileDataUpdater implements DataUpdaterInterface {
       return true;
     } catch (error) {
       if (error.name !== 'NotFound') {
-        console.error(`Error checking "${this.resourceName}" existence for token ${tokenId}.`);
+        console.error(`Error checking "${this.resourceName}" existence for token ${tokenId.toString()}.`);
         console.error(error);
       }
     }

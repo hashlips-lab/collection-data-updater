@@ -1,36 +1,30 @@
-import CollectionStatusProviderInterface, { TokensRevealStatus } from '../CollectionStatusProviderInterface';
+import { BigNumber } from 'ethers';
+import CollectionStatusProviderInterface from '../CollectionStatusProviderInterface';
 
 export default class TestingCollectionStatusProvider implements CollectionStatusProviderInterface {
+  private totalSupply: BigNumber;
+  private maxSupply: BigNumber;
+  private startTokenId: BigNumber;
+
   public constructor(
-    private totalSupply: number = 1990,
-    private maxSupply: number = 10000,
-    private startTokenId: number = 1,
+    totalSupply: number = 1990,
+    maxSupply: number = 10000,
+    startTokenId: number = 1,
   ) {
+    this.totalSupply = BigNumber.from(totalSupply);
+    this.maxSupply = BigNumber.from(maxSupply);
+    this.startTokenId = BigNumber.from(startTokenId);
   }
 
-  public async getTokensRevealStatus(): Promise<TokensRevealStatus[]> {
-    const tokensRevealStatus: TokensRevealStatus[] = [];
-    const totalSupply = await this.getTotalSupply();
-
-    for (const tokenId of await this.getAllTokenIds()) {
-      tokensRevealStatus.push({
-        tokenId,
-        isRevealed: tokenId <= totalSupply,
-      });
-    }
-
-    return tokensRevealStatus;
+  public async getTokenIds(): Promise<BigNumber[]> {
+    return [...Array(this.maxSupply).keys()].map(i => this.startTokenId.add(i));
   }
 
-  private async getAllTokenIds(): Promise<number[]> {
-    return [...Array(await this.getMaxSupply()).keys()].map(i => i + this.startTokenId);
+  public async isTokenRevealed(tokenId: BigNumber): Promise<boolean> {
+    return tokenId.lte(this.totalSupply);
   }
 
-  private async getTotalSupply(): Promise<number> {
-    return this.totalSupply;
-  }
-
-  private async getMaxSupply(): Promise<number> {
-    return this.maxSupply;
+  public async refresh(): Promise<void> {
+    // Nothing to do here...
   }
 }

@@ -1,3 +1,5 @@
+import { BigNumber } from 'ethers';
+
 export default interface DataUpdaterInterface {
-  updateToken: (tokenId: number, isRevealed: boolean) => Promise<void>;
+  updateToken: (tokenId: BigNumber, isRevealed: boolean) => Promise<void>;
 }

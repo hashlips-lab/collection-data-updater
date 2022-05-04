@@ -1,36 +1,35 @@
-import { Contract } from 'ethers';
-import CollectionStatusProviderInterface, { TokensRevealStatus } from '../CollectionStatusProviderInterface';
+import { BigNumber, Contract } from 'ethers';
+import CollectionStatusProviderInterface from '../CollectionStatusProviderInterface';
 
 export default class ERC721CollectionStatusProvider implements CollectionStatusProviderInterface {
+  private totalSupply: BigNumber = BigNumber.from(0);
+  private tokenIds: BigNumber[] = [];
+  private readonly startTokenId: BigNumber;
+
   public constructor(
     private contract: Contract,
-    private startTokenId: number = 1,
+    startTokenId: BigNumber|number = 1,
   ) {
+    this.startTokenId = BigNumber.from(startTokenId);
   }
 
-  public async getTokensRevealStatus(): Promise<TokensRevealStatus[]> {
-    const tokensRevealStatus: TokensRevealStatus[] = [];
-    const totalSupply = await this.getTotalSupply();
-
-    for (const tokenId of await this.getAllTokenIds()) {
-      tokensRevealStatus.push({
-        tokenId,
-        isRevealed: tokenId <= totalSupply,
-      });
+  public async getTokenIds(): Promise<BigNumber[]> {
+    if (this.tokenIds.length === 0) {
+      const maxSupply = await this.contract.maxSupply();
+      
+      for (let i = this.startTokenId; i.lte(maxSupply); i = i.add(1)) {
+        this.tokenIds.push(i);
+      }
     }
 
-    return tokensRevealStatus;
+    return this.tokenIds;
   }
 
-  private async getAllTokenIds(): Promise<number[]> {
-    return [...Array(await this.getMaxSupply()).keys()].map(i => i + this.startTokenId);
+  public async isTokenRevealed(tokenId: BigNumber): Promise<boolean> {
+    return tokenId.lte(this.totalSupply);
   }
 
-  private async getTotalSupply(): Promise<number> {
-    return await (await this.contract.totalSupply()).toNumber();
-  }
-
-  private async getMaxSupply(): Promise<number> {
-    return await (await this.contract.maxSupply()).toNumber();
+  public async refresh(): Promise<void> {
+    this.totalSupply = await this.contract.totalSupply();
   }
 }

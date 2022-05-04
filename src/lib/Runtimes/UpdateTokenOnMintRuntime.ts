@@ -16,7 +16,7 @@ export default class UpdateTokenOnMintRuntime implements RuntimeInterface {
       async (from: string, to: string, tokenId: BigNumber) => {
         console.log(`Token #${tokenId} was minted by ${to}...`);
     
-        await collectionDataUpdater.updateSingle(tokenId.toNumber(), true);
+        await collectionDataUpdater.updateSingleToken(tokenId);
       },
     );
   }

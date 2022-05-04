@@ -1,8 +1,7 @@
-export interface TokensRevealStatus {
-  tokenId: number;
-  isRevealed: boolean;
-}
+import { BigNumber } from 'ethers';
 
 export default interface CollectionStatusProviderInterface {
-  getTokensRevealStatus: () => Promise<TokensRevealStatus[]>;
+  getTokenIds: () => Promise<BigNumber[]>;
+  isTokenRevealed: (tokenId: BigNumber) => Promise<boolean>;
+  refresh: () => Promise<void>;
 }

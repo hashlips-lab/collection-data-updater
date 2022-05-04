@@ -8,7 +8,7 @@ export default class UpdateAllTokensEveryNSecondsRuntime implements RuntimeInter
   }
 
   public async run(collectionDataUpdater: CollectionDataUpdater): Promise<void> {
-    await collectionDataUpdater.updateAll();
+    await collectionDataUpdater.updateAllTokens();
 
     setTimeout(
       () => this.run(collectionDataUpdater),

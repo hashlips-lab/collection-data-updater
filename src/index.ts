@@ -5,9 +5,10 @@ export { default as CollectionStatusProviderInterface } from './lib/CollectionSt
 export { default as DataUpdaterInterface } from './lib/DataUpdaterInterface';
 export { default as RuntimeInterface } from './lib/RuntimeInterface';
 
+export { default as S3ConfigurationInterface } from './lib/Util/S3/S3ConfigurationInterface';
+
 // Implementations
 export { default as ERC721Contract } from './lib/Util/Contracts/ERC721Contract';
-export { default as S3ConfigurationInterface } from './lib/Util/S3/S3ConfigurationInterface';
 
 export { default as ERC721CollectionStatusProvider } from './lib/CollectionStatusProviders/ERC721CollectionStatusProvider';
 export { default as TestingProvider } from './lib/CollectionStatusProviders/TestingCollectionStatusProvider';
