@@ -1,5 +1,5 @@
-import { BigNumber, Contract } from 'ethers';
-import CollectionStatusProviderInterface from '../CollectionStatusProviderInterface';
+import { BigNumber, Contract } from "ethers";
+import CollectionStatusProviderInterface from "../CollectionStatusProviderInterface";
 
 export default class ERC721CollectionStatusProvider implements CollectionStatusProviderInterface {
   private totalSupply: BigNumber = BigNumber.from(0);

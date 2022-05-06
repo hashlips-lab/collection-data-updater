@@ -1,5 +1,5 @@
-import CollectionDataUpdater from '../../CollectionDataUpdater';
-import RuntimeInterface from '../RuntimeInterface';
+import CollectionDataUpdater from "../../CollectionDataUpdater";
+import RuntimeInterface from "../RuntimeInterface";
 
 export default class UpdateAllTokensEveryNSecondsRuntime implements RuntimeInterface {
   public constructor(

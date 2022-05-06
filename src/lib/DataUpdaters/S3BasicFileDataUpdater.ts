@@ -1,7 +1,7 @@
-import * as S3 from 'aws-sdk/clients/s3';
-import { BigNumber } from 'ethers';
-import DataUpdaterInterface from '../DataUpdaterInterface';
-import S3ConfigurationInterface from '../Util/S3/S3ConfigurationInterface';
+import * as S3 from "aws-sdk/clients/s3";
+import { BigNumber } from "ethers";
+import DataUpdaterInterface from "../DataUpdaterInterface";
+import S3ConfigurationInterface from "../Util/S3/S3ConfigurationInterface";
 
 export default class S3BasicFileDataUpdater implements DataUpdaterInterface {
   protected s3: S3;
@@ -14,7 +14,7 @@ export default class S3BasicFileDataUpdater implements DataUpdaterInterface {
     protected fileExtension: string,
   ) {
     this.s3 = new S3({
-      apiVersion: 'latest',
+      apiVersion: "latest",
       endpoint: this.s3Config.endpoint,
       credentials: {
         accessKeyId: this.s3Config.accessKey,
@@ -47,7 +47,7 @@ export default class S3BasicFileDataUpdater implements DataUpdaterInterface {
         Bucket: this.s3Config.bucketName,
         CopySource: `${this.s3Config.bucketName}/${this.buildSourceObjectKey(tokenId)}`,
         Key: this.buildDestinationObjectKey(tokenId),
-        ACL: 'public-read',
+        ACL: "public-read",
       }).promise();
     } catch (error) {
       console.error(`Error copying "${this.resourceName}" for token ${tokenId.toString()}.`);
@@ -84,7 +84,7 @@ export default class S3BasicFileDataUpdater implements DataUpdaterInterface {
   }
 
   protected buildObjectKey(tokenId: BigNumber, path: string): string {
-    return `${this.s3Config.pathPrefix}/${path}/${tokenId.toString()}${this.fileExtension}`.replace('//', '/');
+    return `${this.s3Config.pathPrefix}/${path}/${tokenId.toString()}${this.fileExtension}`.replace("//", "/");
   }
 
   protected async destinationDataExists(tokenId: BigNumber): Promise<boolean> {
@@ -96,7 +96,7 @@ export default class S3BasicFileDataUpdater implements DataUpdaterInterface {
 
       return true;
     } catch (error) {
-      if (error.name !== 'NotFound') {
+      if (error.name !== "NotFound") {
         console.error(`Error checking "${this.resourceName}" existence for token ${tokenId.toString()}.`);
         console.error(error);
       }

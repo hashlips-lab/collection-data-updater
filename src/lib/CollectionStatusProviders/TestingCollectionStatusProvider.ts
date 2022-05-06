@@ -1,5 +1,5 @@
-import { BigNumber } from 'ethers';
-import CollectionStatusProviderInterface from '../CollectionStatusProviderInterface';
+import { BigNumber } from "ethers";
+import CollectionStatusProviderInterface from "../CollectionStatusProviderInterface";
 
 export default class TestingCollectionStatusProvider implements CollectionStatusProviderInterface {
   private totalSupply: BigNumber;

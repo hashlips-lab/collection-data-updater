@@ -1,7 +1,7 @@
-import { BigNumber } from 'ethers';
-import DataUpdaterInterface from './lib/DataUpdaterInterface';
-import RuntimeInterface from './lib/RuntimeInterface';
-import CollectionStatusProviderInterface from './lib/CollectionStatusProviderInterface';
+import { BigNumber } from "ethers";
+import DataUpdaterInterface from "./lib/DataUpdaterInterface";
+import RuntimeInterface from "./lib/RuntimeInterface";
+import CollectionStatusProviderInterface from "./lib/CollectionStatusProviderInterface";
 
 export default class CollectionDataUpdater {
   public constructor (
@@ -27,7 +27,7 @@ export default class CollectionDataUpdater {
 
   public async start(): Promise<void> {
     if (this.runtimes.length === 0) {
-      console.log('No runtime available, waiting for direct calls...');
+      console.log("No runtime available, waiting for direct calls...");
 
       return;
     }

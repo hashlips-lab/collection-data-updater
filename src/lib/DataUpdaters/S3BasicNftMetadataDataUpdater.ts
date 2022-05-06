@@ -1,6 +1,6 @@
-import { BigNumber } from 'ethers';
-import S3ConfigurationInterface from '../Util/S3/S3ConfigurationInterface';
-import S3BasicFileDataUpdater from './S3BasicFileDataUpdater';
+import { BigNumber } from "ethers";
+import S3ConfigurationInterface from "../Util/S3/S3ConfigurationInterface";
+import S3BasicFileDataUpdater from "./S3BasicFileDataUpdater";
 
 export default class S3BasicNftMetadataDataUpdater extends S3BasicFileDataUpdater {
   public constructor(
@@ -9,7 +9,7 @@ export default class S3BasicNftMetadataDataUpdater extends S3BasicFileDataUpdate
     sourcePath: string,
     destinationPath: string,
     private metadataUpdater: (tokenId: BigNumber, metadata: any) => any,
-    fileExtension: string = '.json',
+    fileExtension: string = ".json",
   ) {
     super(resourceName, s3Config, sourcePath, destinationPath, fileExtension);
   }
@@ -36,7 +36,7 @@ export default class S3BasicNftMetadataDataUpdater extends S3BasicFileDataUpdate
         Key: this.buildDestinationObjectKey(tokenId),
         ContentType: sourceData.ContentType,
         Body: JSON.stringify(sourceContent, null, 2),
-        ACL: 'public-read',
+        ACL: "public-read",
       }).promise();
     } catch (error) {
       console.error(`Error copying "${this.resourceName}" for token ${tokenId.toString()}.`);
