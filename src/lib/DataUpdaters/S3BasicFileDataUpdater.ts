@@ -42,15 +42,20 @@ export default class S3BasicFileDataUpdater implements DataUpdaterInterface {
 
     console.log(`Revealing "${this.resourceName}" for token ${tokenId.toString()}...`);
 
+    const sourceKey = this.sanitizeKey(`${this.s3Config.bucketName}/${this.buildSourceObjectKey(tokenId)}`);
+    const destinationKey = this.buildDestinationObjectKey(tokenId);
+
     try {
       await this.s3.copyObject({
         Bucket: this.s3Config.bucketName,
-        CopySource: `${this.s3Config.bucketName}/${this.buildSourceObjectKey(tokenId)}`,
-        Key: this.buildDestinationObjectKey(tokenId),
+        CopySource: sourceKey,
+        Key: destinationKey,
         ACL: "public-read",
       }).promise();
     } catch (error) {
       console.error(`Error copying "${this.resourceName}" for token ${tokenId.toString()}.`);
+      console.error(`Source key: ${sourceKey}`);
+      console.error(`Destination key: ${destinationKey}`);
       console.error(error);
     }
   }
@@ -64,13 +69,16 @@ export default class S3BasicFileDataUpdater implements DataUpdaterInterface {
 
     console.log(`Hiding "${this.resourceName}" for token ${tokenId.toString()}...`);
 
+    const objectKey = this.buildDestinationObjectKey(tokenId);
+
     try {
       await this.s3.deleteObject({
         Bucket: this.s3Config.bucketName,
-        Key: this.buildDestinationObjectKey(tokenId),
+        Key: objectKey,
       }).promise();
     } catch (error) {
       console.error(`Error deleting "${this.resourceName}" for token ${tokenId.toString()}.`);
+      console.error(`Object key: ${objectKey}`);
       console.error(error);
     }
   }
@@ -84,24 +92,33 @@ export default class S3BasicFileDataUpdater implements DataUpdaterInterface {
   }
 
   protected buildObjectKey(tokenId: BigNumber, path: string): string {
-    return `${this.s3Config.pathPrefix}/${path}/${tokenId.toString()}${this.fileExtension}`.replace("//", "/");
+    return this.sanitizeKey(`${this.s3Config.pathPrefix}/${path}/${tokenId.toString()}${this.fileExtension}`);
   }
 
   protected async destinationDataExists(tokenId: BigNumber): Promise<boolean> {
+    const objectKey = this.buildDestinationObjectKey(tokenId);
+
     try {
       await this.s3.headObject({
         Bucket: this.s3Config.bucketName,
-        Key: this.buildDestinationObjectKey(tokenId),
+        Key: objectKey,
       }).promise();
 
       return true;
     } catch (error) {
       if (error.name !== "NotFound") {
         console.error(`Error checking "${this.resourceName}" existence for token ${tokenId.toString()}.`);
+        console.error(`Object key: ${objectKey}`);
         console.error(error);
       }
     }
 
     return false;
+  }
+
+  protected sanitizeKey(value: string): string {
+    // Remove leading and double "/" or keys won't be valid.
+
+    return value.replaceAll(/[\/]+/g, "/").replace(/^\//, "");
   }
 }
