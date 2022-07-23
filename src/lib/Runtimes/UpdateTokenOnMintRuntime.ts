@@ -20,7 +20,7 @@ export default class UpdateTokenOnMintRuntime implements RuntimeInterface {
         // A delay helps avoiding out-of-sync readings during the next steps...
         setTimeout(async () => {
           await collectionDataUpdater.updateSingleToken(tokenId);
-        }, this.reactionDelay);
+        }, this.reactionDelay * 1000);
       },
     );
   }
