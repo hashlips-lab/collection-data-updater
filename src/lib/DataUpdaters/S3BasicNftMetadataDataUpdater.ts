@@ -32,6 +32,10 @@ export default class S3BasicNftMetadataDataUpdater extends S3BasicFileDataUpdate
         Key: sourceKey,
       }).promise();
 
+      if (sourceData.Body === undefined) {
+        throw "Object body was undefined.";
+      }
+
       const sourceContent = this.metadataUpdater(tokenId, JSON.parse(sourceData.Body.toString()));
 
       await this.s3.upload({
