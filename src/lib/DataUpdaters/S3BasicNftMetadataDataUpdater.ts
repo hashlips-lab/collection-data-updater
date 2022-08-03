@@ -33,7 +33,7 @@ export default class S3BasicNftMetadataDataUpdater extends S3BasicFileDataUpdate
       }).promise();
 
       if (sourceData.Body === undefined) {
-        throw "Object body was undefined.";
+        throw new Error("Object body was undefined.");
       }
 
       const sourceContent = this.metadataUpdater(tokenId, JSON.parse(sourceData.Body.toString()));
