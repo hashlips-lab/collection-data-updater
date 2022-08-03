@@ -1,5 +1,5 @@
-import { BigNumber } from "ethers";
+import EventDataInterface from "./EventDataInterface";
 
 export default interface DataUpdaterInterface {
-  updateToken: (tokenId: BigNumber, isRevealed: boolean) => Promise<void>;
+  updateToken: (eventData: EventDataInterface) => Promise<EventDataInterface>;
 }
