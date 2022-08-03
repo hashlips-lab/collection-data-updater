@@ -1,5 +1,7 @@
 import { BigNumber } from "ethers";
 import CollectionStatusProviderInterface from "../CollectionStatusProviderInterface";
+import EventDataInterface from "../EventDataInterface";
+import { EVENT_DATA_IS_REVEALED } from "./ERC721CollectionStatusProvider";
 
 export default class TestingCollectionStatusProvider implements CollectionStatusProviderInterface {
   private totalSupply: BigNumber;
@@ -24,7 +26,7 @@ export default class TestingCollectionStatusProvider implements CollectionStatus
     return tokenId.lte(this.totalSupply);
   }
 
-  public async refresh(): Promise<void> {
-    // Nothing to do here...
+  public async processEventDataBeforeUpdate(eventData: EventDataInterface): Promise<EventDataInterface> {
+    return { [EVENT_DATA_IS_REVEALED]: eventData.tokenId.lte(this.totalSupply), ...eventData }
   }
 }

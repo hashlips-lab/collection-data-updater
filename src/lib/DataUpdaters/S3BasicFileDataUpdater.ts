@@ -1,6 +1,8 @@
 import * as S3 from "aws-sdk/clients/s3";
 import { BigNumber } from "ethers";
+import { isRevealed as checkIsRevealed } from "../CollectionStatusProviders/ERC721CollectionStatusProvider";
 import DataUpdaterInterface from "../DataUpdaterInterface";
+import EventDataInterface from "../EventDataInterface";
 import S3ConfigurationInterface from "../Util/S3/S3ConfigurationInterface";
 
 export default class S3BasicFileDataUpdater implements DataUpdaterInterface {
@@ -23,14 +25,24 @@ export default class S3BasicFileDataUpdater implements DataUpdaterInterface {
     });
   }
 
-  public async updateToken(tokenId: BigNumber, isRevealed: boolean): Promise<void> {
-    if (isRevealed) {
-      await this.revealToken(tokenId);
+  public async updateToken(eventData: EventDataInterface): Promise<EventDataInterface> {
+    const isRevealed = checkIsRevealed(eventData);
 
-      return;
+    if (isRevealed === undefined) {
+      console.log(`Skipping "${this.resourceName}" for token ${eventData.tokenId.toString()} (token status is undefined)...`);
+
+      return eventData;
     }
 
-    await this.hideToken(tokenId);
+    if (isRevealed) {
+      await this.revealToken(eventData.tokenId);
+
+      return eventData;
+    }
+
+    await this.hideToken(eventData.tokenId);
+
+    return eventData;
   }
 
   protected async revealToken(tokenId: BigNumber): Promise<void> {

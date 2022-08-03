@@ -1,7 +1,7 @@
 import { BigNumber } from "ethers";
+import EventDataInterface from "./EventDataInterface";
 
 export default interface CollectionStatusProviderInterface {
   getTokenIds: () => Promise<BigNumber[]>;
-  isTokenRevealed: (tokenId: BigNumber) => Promise<boolean>;
-  refresh: () => Promise<void>;
+  processEventDataBeforeUpdate: (eventData: EventDataInterface) => Promise<EventDataInterface>;
 }
