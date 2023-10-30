@@ -1,9 +1,9 @@
 import { Contract } from "ethers";
-import { JsonRpcProvider } from "@ethersproject/providers";
+import { StaticJsonRpcProvider, Provider } from "@ethersproject/providers";
 
 export default class ERC721Contract extends Contract {
-    constructor (address: string, providerOrRpcUrl: JsonRpcProvider|string) {
-      const provider = (typeof providerOrRpcUrl === "string") ? new JsonRpcProvider(providerOrRpcUrl) : providerOrRpcUrl;
+    constructor (address: string, providerOrRpcUrl: Provider|string) {
+      const provider: Provider = (typeof providerOrRpcUrl === "string") ? new StaticJsonRpcProvider(providerOrRpcUrl) : providerOrRpcUrl;
 
       super(
         address,
